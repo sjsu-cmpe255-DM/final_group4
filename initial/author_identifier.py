@@ -11,11 +11,33 @@ from nltk.tokenize import word_tokenize
 import nltk
 from sklearn.model_selection import cross_val_score
 
+from models.random_forest import train_random_forest
 from models.logistic_regression import train_logistic_regression
 
 
 
-
+def evaluate_models_with_cv(X, y, cv=5):
+    # Dictionary to store models
+    models = {
+        'Random Forest': train_random_forest(X, y)
+    }
+    
+    # Dictionary to store results
+    cv_results = {}
+    
+    # Perform cross-validation for each model
+    for name, model in models.items():
+        cv_scores = cross_val_score(model, X, y, cv=cv)
+        cv_results[name] = {
+            'mean_score': cv_scores.mean(),
+            'std_score': cv_scores.std(),
+            'scores': cv_scores
+        }
+        print(f"\n{name} CV Results:")
+        print(f"Individual scores: {cv_scores}")
+        print(f"Mean CV score: {cv_scores.mean():.4f} (+/- {cv_scores.std() * 2:.4f})")
+    
+    return cv_results
 
 nltk.download('punkt_tab')
 nltk.download('stopwords')
@@ -69,7 +91,22 @@ y_test = y[df['dataset'] == 'C50test']
 
 model_results = {}
 
+rf_model = train_random_forest(X_train, y_train)
+rf_pred = rf_model.predict(X_test)
+rf_accuracy = accuracy_score(y_test, rf_pred)
+model_results['Random Forest'] = rf_accuracy
+print("Random Forest Accuracy:", rf_accuracy)
+print("Classification Report:\n", classification_report(y_test, rf_pred))
 
+
+# Update your main code section to:
+# After PCA reduction but before training individual models:
+cv_results = evaluate_models_with_cv(X_reduced, y)
+
+# Find best model from CV results
+best_model_name = max(cv_results, key=lambda x: cv_results[x]['mean_score'])
+print(f"\nBest Model (CV): {best_model_name}")
+print(f"Mean CV Score: {cv_results[best_model_name]['mean_score']:.4f}")
 
 
 
