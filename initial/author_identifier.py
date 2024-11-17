@@ -13,7 +13,7 @@ from sklearn.model_selection import cross_val_score
 
 from models.random_forest import train_random_forest
 from models.logistic_regression import train_logistic_regression
-
+from models.linearsvc import train_svc
 
 
 def evaluate_models_with_cv(X, y, cv=5):
@@ -73,8 +73,8 @@ df['cleaned_text'] = df['text'].apply(preprocess_text)
 
 
 X_tfidf, tfidf_vectorizer = extract_tfidf_features(df['cleaned_text'])
-# print(X_tfidf.shape)
-# print(X_tfidf)
+print(X_tfidf.shape)
+print(X_tfidf)
 dfv = pd.DataFrame(X_tfidf)
 X_reduced, pca = apply_dimensionality_reduction(dfv)
 # print(X_reduced.head())
@@ -118,6 +118,18 @@ print("\nLogistic Regression Accuracy:", lr_accuracy)
 print("Classification Report:\n", classification_report(y_test, lr_pred))
 
 
+
+
+best_model_name = max(model_results, key=model_results.get)
+best_model_accuracy = model_results[best_model_name]
+print(f"\nBest Model: {best_model_name} with Accuracy: {best_model_accuracy}")
+
+svm_model = train_svc(X_train, y_train)
+svm_pred = svm_model.predict(X_test)
+svm_accuracy = accuracy_score(y_test, svm_pred)
+model_results['SVM'] = svm_accuracy
+print("\nSVM Accuracy:", svm_accuracy)
+print("Classification Report:\n", classification_report(y_test, svm_pred))
 
 
 best_model_name = max(model_results, key=model_results.get)
