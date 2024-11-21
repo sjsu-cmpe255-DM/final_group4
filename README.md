@@ -17,11 +17,21 @@ We use the **Reuter_50_50** dataset:
 ## **Goal**
 The primary goal is to test multiple machine learning models and determine which one performs best in identifying authorship.
 
-### Models Implemented:
+### Initial Models Tested:
 1. Random Forest Classifier (`random_forest.py`)
 2. Logistic Regression (`logistic_regression.py`)
-3. Support Vector Machine (SVM) (`svm.py`)
-4. XGBoost Classifier (`xgboost_model.py`)
+3. Linear SVC (`linearsvc.py`)
+
+---
+
+
+### Final Models Implemented:
+1. KNN
+2. Naive Bayes
+3. Logistic Regression
+4. Random Forest
+5. Ensemble
+6. Linear SVC
 
 ---
 
